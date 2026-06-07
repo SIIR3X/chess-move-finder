@@ -1,0 +1,20 @@
+# chess-move-finder runtime configuration.
+
+capture:
+  monitor: 1          # index of the screen to capture (1 = primary)
+  target_fps: 60      # capture/processing loop cap
+
+inference:
+  model_path: models/chess.onnx
+  providers:          # ONNX Runtime execution providers, in priority order
+    - CUDAExecutionProvider
+    - CPUExecutionProvider
+  conf_threshold: 0.5
+
+engine:
+  stockfish_path: stockfish   # path to the Stockfish UCI binary
+  movetime_ms: 200            # think time per move (lower = faster, weaker)
+
+overlay:
+  arrow_color: [0, 200, 0]
+  arrow_thickness: 6
