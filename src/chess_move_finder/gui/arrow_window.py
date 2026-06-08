@@ -54,8 +54,15 @@ class ArrowOverlay(QWidget):
         self._line = (fx - ox, fy - oy, tx - ox, ty - oy)
         logger.info(
             "Overlay: screen at point=%s geom=(%d,%d %dx%d) local=(%.0f,%.0f)->(%.0f,%.0f)",
-            at is not None, geo.x(), geo.y(), geo.width(), geo.height(),
-            self._line[0], self._line[1], self._line[2], self._line[3],
+            at is not None,
+            geo.x(),
+            geo.y(),
+            geo.width(),
+            geo.height(),
+            self._line[0],
+            self._line[1],
+            self._line[2],
+            self._line[3],
         )
         self.show()
         self.raise_()

@@ -27,9 +27,9 @@ class GameSnapshot:
     """The state of a chess.com game as carried by one frame."""
 
     game_id: str
-    moves: list[str]                                          # half-moves in UCI, from the start
-    clocks: list[int] = field(default_factory=list)          # ms remaining, [white, black]
-    actions: list[Any] = field(default_factory=list)         # per-side available actions
+    moves: list[str]  # half-moves in UCI, from the start
+    clocks: list[int] = field(default_factory=list)  # ms remaining, [white, black]
+    actions: list[Any] = field(default_factory=list)  # per-side available actions
 
 
 def parse_frame(payload: str) -> GameSnapshot | None:

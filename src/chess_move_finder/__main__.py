@@ -57,6 +57,7 @@ from .gui.calibration import CalibrationOverlay
 from .gui.control_panel import ControlPanel, QtLogHandler
 from .gui.overlay_controller import OverlayController
 from .overlay.calibration_store import load_calibration
+from .paths import bundled, config_dir, is_frozen
 from .tracking.board_state import READ_BOARD_JS, parse_live_game
 from .tracking.chesscom import GameSnapshot
 from .tracking.chrome_cdp import (
@@ -73,10 +74,8 @@ from .tracking.puzzles import (
     placement_fen,
 )
 
-_CONFIG_PATH = Path("config/config.yaml")
+_CONFIG_PATH = config_dir() / "config.yaml"
 _DEBUG_FRAMES_ENV = "CMF_DEBUG_FRAMES"
-# Icons live in the package so they ship with it; drop logo.ico / logo.png here.
-_ASSETS_DIR = Path(__file__).resolve().parent / "assets"
 # A stable identity so Windows shows our taskbar icon, not python.exe's.
 _APP_ID = "chessmovefinder.app"
 
@@ -84,12 +83,23 @@ logger = logging.getLogger("chess_move_finder")
 
 
 def _app_icon() -> QIcon | None:
-    """The app/window icon from the assets folder (.ico preferred), or None if absent."""
+    """The app/window icon bundled with the app (.ico preferred), or None if absent."""
     for name in ("logo.ico", "logo.png"):
-        path = _ASSETS_DIR / name
+        path = bundled("assets", name)
         if path.exists():
             return QIcon(str(path))
     return None
+
+
+def _ensure_config() -> None:
+    """In a frozen build, seed an editable config next to the exe on first run."""
+    if not is_frozen() or _CONFIG_PATH.exists():
+        return
+    with contextlib.suppress(OSError):
+        _CONFIG_PATH.parent.mkdir(parents=True, exist_ok=True)
+        _CONFIG_PATH.write_text(
+            bundled("config", "config.yaml").read_text(encoding="utf-8"), encoding="utf-8"
+        )
 
 
 def _set_taskbar_identity() -> None:
@@ -204,7 +214,7 @@ class BoardPoller(threading.Thread):
         elif self._state.games and not self._ws_color_known.is_set():
             self._tick_live(state)
 
-    def _tick_puzzle(self, state: dict) -> None:
+    def _tick_puzzle(self, state: dict[str, Any]) -> None:
         pieces = state.get("pieces")
         if not isinstance(pieces, list):
             return
@@ -218,7 +228,7 @@ class BoardPoller(threading.Thread):
         board, move = result
         self._controller.on_suggestion(board, move)
 
-    def _tick_live(self, state: dict) -> None:
+    def _tick_live(self, state: dict[str, Any]) -> None:
         live = parse_live_game(state)
         if live is None:
             return
@@ -379,6 +389,9 @@ def main() -> None:
         format="%(asctime)s  %(message)s",
         datefmt="%H:%M:%S",
     )
+    # A double-clicked exe has no console and no args, so default to the GUI there.
+    gui = args.gui or is_frozen()
+    _ensure_config()
     cfg = _load_config()
     tracking_cfg = _section(cfg, "tracking")
     overlay_cfg = _section(cfg, "overlay")
@@ -402,7 +415,7 @@ def main() -> None:
 
     # GUI mode: assistance starts off and is enabled only once setup is complete.
     # Console mode: no panel, so assistance follows the config.
-    if args.gui:
+    if gui:
         state = AssistanceState(games=False, puzzles=False)
     else:
         state = AssistanceState(games=True, puzzles=puzzles_cfg.get("enabled", True))
@@ -534,7 +547,7 @@ def main() -> None:
     chrome_host = tracking_cfg.get("host", DEFAULT_HOST)
     chrome_port = tracking_cfg.get("port", DEFAULT_PORT)
 
-    if args.gui:
+    if gui:
         # Interface mode: show the panel, no auto-calibration. The user works through the
         # setup (each step shows a status dot); assistance unlocks only once all are green.
         panel = ControlPanel(
@@ -544,9 +557,7 @@ def main() -> None:
             chrome_port=chrome_port,
         )
         log_handler = QtLogHandler()
-        log_handler.setFormatter(
-            logging.Formatter("%(asctime)s  %(message)s", datefmt="%H:%M:%S")
-        )
+        log_handler.setFormatter(logging.Formatter("%(asctime)s  %(message)s", datefmt="%H:%M:%S"))
         log_handler.bridge.message.connect(panel.append_log)
         logger.addHandler(log_handler)
         panel.games_toggled.connect(set_games)

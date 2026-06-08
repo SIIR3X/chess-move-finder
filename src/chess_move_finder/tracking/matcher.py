@@ -36,7 +36,7 @@ class MatchTicket:
     """The player's assignment for one game, from a matchmaking ticket."""
 
     game_id: str
-    color: str       # "white" or "black"
+    color: str  # "white" or "black"
     user_id: str
 
 

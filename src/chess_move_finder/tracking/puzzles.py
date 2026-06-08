@@ -23,6 +23,7 @@ import json
 import re
 import threading
 from dataclasses import dataclass
+from typing import Any
 
 import chess
 
@@ -51,7 +52,7 @@ def _square(raw: str) -> str:
     return raw.rsplit("_", 1)[-1].lower()
 
 
-def _uci(move: dict) -> str | None:
+def _uci(move: dict[str, Any]) -> str | None:
     src, dst = move.get("from"), move.get("to")
     if not isinstance(src, str) or not isinstance(dst, str):
         return None
@@ -88,7 +89,7 @@ def parse_puzzle(body: str) -> Puzzle | None:
     return Puzzle(puzzle_id, fen, solution, user_color)
 
 
-def _start_fen(puzzle: dict) -> str | None:
+def _start_fen(puzzle: dict[str, Any]) -> str | None:
     pgn = puzzle.get("pgn")
     if isinstance(pgn, str):
         match = _FEN_TAG.search(pgn)
@@ -195,9 +196,7 @@ class PuzzleSolver:
         with self._lock:
             return bool(self._placements)
 
-    def suggestion_for(
-        self, live_placement: str
-    ) -> tuple[chess.Board, chess.Move | None] | None:
+    def suggestion_for(self, live_placement: str) -> tuple[chess.Board, chess.Move | None] | None:
         """Map the live board to the solution and return the move to display.
 
         * ``None`` - the position matches no known ply (transient/mid-animation, or

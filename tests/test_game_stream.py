@@ -39,8 +39,8 @@ def test_fires_game_start_once_per_game() -> None:
 def test_emits_only_newly_played_moves() -> None:
     stream, events = _collect()
     stream.feed(_frame("g1", []))
-    stream.feed(_frame("g1", ["mC"]))        # e2e4
-    stream.feed(_frame("g1", ["mC"]))        # resend
+    stream.feed(_frame("g1", ["mC"]))  # e2e4
+    stream.feed(_frame("g1", ["mC"]))  # resend
     stream.feed(_frame("g1", ["mC", "0K"]))  # e7e5 added
     assert events == [("start", "g1"), ("move", "e2e4"), ("move", "e7e5")]
 
@@ -48,8 +48,8 @@ def test_emits_only_newly_played_moves() -> None:
 def test_a_new_game_id_restarts_tracking() -> None:
     stream, events = _collect()
     stream.feed(_frame("g1", ["mC", "0K"]))
-    stream.feed(_frame("g2", []))            # new game
-    stream.feed(_frame("g2", ["lB"]))        # d2d4
+    stream.feed(_frame("g2", []))  # new game
+    stream.feed(_frame("g2", ["lB"]))  # d2d4
     assert events == [
         ("start", "g1"),
         ("move", "e2e4"),
@@ -66,7 +66,7 @@ def test_game_start_reports_color_from_preceding_ticket() -> None:
         on_move=lambda _uci: None,
     )
     stream.feed(_matcher_frame("g1", "black"))  # ticket arrives first
-    stream.feed(_frame("g1", []))               # then the game starts
+    stream.feed(_frame("g1", []))  # then the game starts
     assert starts == [("g1", "black")]
 
 

@@ -44,6 +44,7 @@ def _filename(path: str) -> str:
     """The last path component (handles both / and \\ separators)."""
     return path.replace("\\", "/").rsplit("/", 1)[-1]
 
+
 _STYLESHEET = f"""
 #panel {{
     background: #1b1d22;
@@ -226,21 +227,33 @@ class ControlPanel(QWidget):
         root.addWidget(subtitle)
 
         root.addWidget(self._section_label("SETUP"))
-        root.addWidget(self._card([
-            self._setup_row(
-                "stockfish", "Stockfish engine",
-                _filename(stockfish_path) or "Not selected",
-                "Browse", self._browse_stockfish,
-            ),
-            self._setup_row(
-                "chrome", "Chrome (debug)", "Not running",
-                "Launch", self.launch_chrome_requested.emit,
-            ),
-            self._setup_row(
-                "calibration", "Board calibration", "Not calibrated",
-                "Calibrate", self.calibrate_requested.emit,
-            ),
-        ]))
+        root.addWidget(
+            self._card(
+                [
+                    self._setup_row(
+                        "stockfish",
+                        "Stockfish engine",
+                        _filename(stockfish_path) or "Not selected",
+                        "Browse",
+                        self._browse_stockfish,
+                    ),
+                    self._setup_row(
+                        "chrome",
+                        "Chrome (debug)",
+                        "Not running",
+                        "Launch",
+                        self.launch_chrome_requested.emit,
+                    ),
+                    self._setup_row(
+                        "calibration",
+                        "Board calibration",
+                        "Not calibrated",
+                        "Calibrate",
+                        self.calibrate_requested.emit,
+                    ),
+                ]
+            )
+        )
 
         root.addWidget(self._section_label("ASSISTANCE"))
         self._games = ToggleSwitch()
@@ -249,10 +262,14 @@ class ControlPanel(QWidget):
         self._puzzles = ToggleSwitch()
         self._puzzles.setChecked(puzzles_on)
         self._puzzles.toggled.connect(self.puzzles_toggled)
-        root.addWidget(self._card([
-            self._toggle_row("Game assistance", self._games),
-            self._toggle_row("Puzzle assistance", self._puzzles),
-        ]))
+        root.addWidget(
+            self._card(
+                [
+                    self._toggle_row("Game assistance", self._games),
+                    self._toggle_row("Puzzle assistance", self._puzzles),
+                ]
+            )
+        )
         self._hint = QLabel("Complete the setup above to enable assistance.")
         self._hint.setObjectName("hint")
         root.addWidget(self._hint)
