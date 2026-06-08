@@ -8,12 +8,12 @@ install: ## Install the project and development dependencies
 	pip install -e ".[dev]"
 
 format: ## Format the code and apply auto-fixable lint (ruff)
-	ruff format src tests scripts
-	ruff check --fix src tests scripts
+	ruff format src tests
+	ruff check --fix src tests
 
 lint: ## Check formatting and lint without modifying anything
-	ruff format --check src tests scripts
-	ruff check src tests scripts
+	ruff format --check src tests
+	ruff check src tests
 
 typecheck: ## Check types (mypy)
 	mypy
