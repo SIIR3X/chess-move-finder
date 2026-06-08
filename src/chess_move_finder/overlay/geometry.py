@@ -15,11 +15,11 @@ def square_center(rect: BoardRect, square: int, white_bottom: bool) -> tuple[flo
     file = square % 8
     rank = square // 8
     if white_bottom:
-        col = file          # a..h left to right
-        row = 7 - rank      # rank 8 at the top
+        col = file  # a..h left to right
+        row = 7 - rank  # rank 8 at the top
     else:
-        col = 7 - file      # board flipped: a..h right to left
-        row = rank          # rank 1 at the top
+        col = 7 - file  # board flipped: a..h right to left
+        row = rank  # rank 1 at the top
     cell_w = rect.w / 8
     cell_h = rect.h / 8
     cx = rect.x + (col + 0.5) * cell_w

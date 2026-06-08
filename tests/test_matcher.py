@@ -35,8 +35,8 @@ def test_ignores_non_matcher_socketio_frame() -> None:
 
 
 def test_ignores_game_and_heartbeat_frames() -> None:
-    assert parse_ticket("AAAAAAwAAAAAAAAAAAA=") is None          # heartbeat
-    assert parse_ticket('{"id": "g", "moves": []}') is None      # plain JSON, no array
+    assert parse_ticket("AAAAAAwAAAAAAAAAAAA=") is None  # heartbeat
+    assert parse_ticket('{"id": "g", "moves": []}') is None  # plain JSON, no array
 
 
 def test_parses_real_captured_frame() -> None:

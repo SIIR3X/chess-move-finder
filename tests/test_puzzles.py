@@ -1,10 +1,12 @@
 """Tests for chess.com puzzle parsing, board reading, and step-by-step solving."""
 
 import json
+from typing import Any
 
 import chess
 
 from chess_move_finder.tracking.puzzles import (
+    Puzzle,
     PuzzleSolver,
     parse_puzzle,
     placement_fen,
@@ -16,7 +18,7 @@ _START_FEN = "r2qkbQ1/ppp4p/8/8/4n3/1P6/P1P1PPPP/RN2KBNR w KQq - 0 1"
 _SOLUTION = ["g8h7", "f8b4", "c2c3", "b4c3", "b1c3", "d8d2"]
 
 
-def _move(uci: str) -> dict:
+def _move(uci: str) -> dict[str, Any]:
     return {"move": {"from": f"SQUARE_{uci[:2].upper()}", "to": f"SQUARE_{uci[2:4].upper()}"}}
 
 
@@ -34,6 +36,12 @@ def _body() -> str:
             }
         }
     )
+
+
+def _puzzle() -> Puzzle:
+    puzzle = parse_puzzle(_body())
+    assert puzzle is not None
+    return puzzle
 
 
 def _classes_for(board: chess.Board) -> list[str]:
@@ -105,7 +113,7 @@ def test_placement_fen_empty_is_none() -> None:
 
 def test_solver_shows_each_user_move_in_turn() -> None:
     solver = PuzzleSolver()
-    assert solver.load(parse_puzzle(_body()))
+    assert solver.load(_puzzle())
 
     # The user is Black; their moves are the odd plies (after the opponent's reply).
     for ply, expected in [(1, "f8b4"), (3, "b4c3"), (5, "d8d2")]:
@@ -117,19 +125,19 @@ def test_solver_shows_each_user_move_in_turn() -> None:
 
 def test_solver_clears_on_opponent_turn_and_when_solved() -> None:
     solver = PuzzleSolver()
-    solver.load(parse_puzzle(_body()))
+    solver.load(_puzzle())
 
     # Opponent's turn (start, before the setup move): nothing to suggest.
-    board, move = solver.suggestion_for(_placement_after(0))
-    assert move is None
+    result = solver.suggestion_for(_placement_after(0))
+    assert result is not None and result[1] is None
     # Whole solution played: puzzle solved, clear.
-    board, move = solver.suggestion_for(_placement_after(6))
-    assert move is None
+    result = solver.suggestion_for(_placement_after(6))
+    assert result is not None and result[1] is None
 
 
 def test_solver_ignores_unknown_position() -> None:
     solver = PuzzleSolver()
-    solver.load(parse_puzzle(_body()))
+    solver.load(_puzzle())
     assert solver.suggestion_for(chess.Board().board_fen()) is None
 
 

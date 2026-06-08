@@ -10,10 +10,10 @@ RECT = BoardRect(x=0.0, y=0.0, w=800.0, h=800.0)
 
 
 def test_white_bottom_corners() -> None:
-    assert square_center(RECT, chess.A1, white_bottom=True) == (50.0, 750.0)   # bottom-left
+    assert square_center(RECT, chess.A1, white_bottom=True) == (50.0, 750.0)  # bottom-left
     assert square_center(RECT, chess.H1, white_bottom=True) == (750.0, 750.0)  # bottom-right
-    assert square_center(RECT, chess.A8, white_bottom=True) == (50.0, 50.0)    # top-left
-    assert square_center(RECT, chess.H8, white_bottom=True) == (750.0, 50.0)   # top-right
+    assert square_center(RECT, chess.A8, white_bottom=True) == (50.0, 50.0)  # top-left
+    assert square_center(RECT, chess.H8, white_bottom=True) == (750.0, 50.0)  # top-right
 
 
 def test_black_bottom_is_flipped() -> None:

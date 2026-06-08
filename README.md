@@ -154,6 +154,22 @@ make test    # run the test suite
 make format  # auto-format and fix lint
 ```
 
+## Building a Windows executable
+
+Package a standalone app with PyInstaller (run this **on Windows**, since it does
+not cross-compile):
+
+```bash
+make build
+```
+
+The result is in `dist/chess-move-finder/` (ship the whole folder). Double-clicking
+`chess-move-finder.exe` opens the control panel directly, and an editable
+`config.yaml` is created next to it on first run.
+
+> Stockfish and Chrome are **not** bundled (they are external programs you point at
+> via `config.yaml`); only the app and its icon/default config are packaged.
+
 ## License
 
 This project is licensed under the [MIT License](LICENSE) (c) 2026 Lucas Fagioli.

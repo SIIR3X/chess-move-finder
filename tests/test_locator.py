@@ -22,5 +22,5 @@ def test_applies_offset_and_scale() -> None:
 
 def test_returns_none_when_no_board() -> None:
     assert screen_board_rect(None) is None
-    assert screen_board_rect({"x": 0}) is None          # missing keys
+    assert screen_board_rect({"x": 0}) is None  # missing keys
     assert screen_board_rect({**_measurement(), "w": 0}) is None  # degenerate

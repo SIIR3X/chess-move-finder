@@ -12,11 +12,12 @@ import json
 import logging
 from pathlib import Path
 
+from ..paths import config_dir
 from .locator import BoardRect
 
 logger = logging.getLogger("chess_move_finder")
 
-CALIBRATION_PATH = Path("config/calibration.json")
+CALIBRATION_PATH = config_dir() / "calibration.json"
 
 
 def rect_from_corners(x1: float, y1: float, x2: float, y2: float) -> BoardRect:
@@ -28,9 +29,7 @@ def load_calibration(path: Path = CALIBRATION_PATH) -> BoardRect | None:
     """Load a saved board rectangle, or ``None`` if absent/unreadable."""
     try:
         data = json.loads(Path(path).read_text(encoding="utf-8"))
-        return BoardRect(
-            float(data["x"]), float(data["y"]), float(data["w"]), float(data["h"])
-        )
+        return BoardRect(float(data["x"]), float(data["y"]), float(data["w"]), float(data["h"]))
     except (OSError, ValueError, KeyError, TypeError):
         return None
 

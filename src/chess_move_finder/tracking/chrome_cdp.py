@@ -207,7 +207,9 @@ class ChromeCdpTracker:
     def _fetch_watched(self, params: dict[str, Any]) -> None:
         """Once a watched request finishes, schedule reading its body off the loop."""
         request_id = params.get("requestId")
-        url = self._watched.pop(request_id, None) if isinstance(request_id, str) else None
+        if not isinstance(request_id, str):
+            return
+        url = self._watched.pop(request_id, None)
         loop = self._loop
         if url is not None and loop is not None:
             loop.create_task(self._read_body(request_id, url))

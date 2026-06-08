@@ -65,7 +65,7 @@ def test_restart_resets_board_and_works_again() -> None:
     assert board.turn == chess.BLACK
     assert board.fullmove_number == 1
     assert board.piece_at(chess.D4) is not None  # the new game's move
-    assert board.piece_at(chess.E4) is None      # the old game's move is gone
+    assert board.piece_at(chess.E4) is None  # the old game's move is gone
 
 
 def test_reconnect_midgame_suggests_when_it_is_our_turn() -> None:

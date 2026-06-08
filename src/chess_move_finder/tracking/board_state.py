@@ -20,6 +20,7 @@ This only *reads* the page (it never injects), consistent with the rest of the a
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Any
 
 import chess
 
@@ -47,7 +48,7 @@ class LiveGame:
     user_color: chess.Color
 
 
-def parse_live_game(state: dict) -> LiveGame | None:
+def parse_live_game(state: dict[str, Any]) -> LiveGame | None:
     """Turn a board-state read into a :class:`LiveGame` (or None if not a game)."""
     fen = state.get("fen")
     if not isinstance(fen, str) or not fen:
