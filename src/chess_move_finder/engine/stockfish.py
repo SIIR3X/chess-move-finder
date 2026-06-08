@@ -8,9 +8,13 @@ with a fixed think time. Kept deliberately simple: the caller owns when to ask
 from __future__ import annotations
 
 import contextlib
+import subprocess
 
 import chess
 import chess.engine
+
+# Stockfish is a console program; on Windows this stops it opening a console window.
+_NO_WINDOW = getattr(subprocess, "CREATE_NO_WINDOW", 0)
 
 
 class StockfishEngine:
@@ -19,7 +23,7 @@ class StockfishEngine:
     def __init__(
         self, path: str, movetime_ms: int = 200, threads: int = 1, hash_mb: int = 16
     ) -> None:
-        self._engine = chess.engine.SimpleEngine.popen_uci(path)
+        self._engine = chess.engine.SimpleEngine.popen_uci(path, creationflags=_NO_WINDOW)
         self._limit = chess.engine.Limit(time=movetime_ms / 1000.0)
         # Apply only the options the engine actually exposes, so a non-Stockfish
         # or stripped build doesn't raise on an unknown option.

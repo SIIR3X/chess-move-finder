@@ -536,9 +536,12 @@ def main() -> None:
             return
         port = tracking_cfg.get("port", DEFAULT_PORT)
         user_dir = chrome_cfg.get("user_data_dir", "C:/chess-profile")
+        # Don't let the child spawn a console window (we run as a windowed app).
+        no_window = getattr(subprocess, "CREATE_NO_WINDOW", 0)
         try:
             subprocess.Popen(
-                [chrome, f"--remote-debugging-port={port}", f"--user-data-dir={user_dir}"]
+                [chrome, f"--remote-debugging-port={port}", f"--user-data-dir={user_dir}"],
+                creationflags=no_window,
             )
             logger.info("Launched Chrome (debug port %s, profile %s)", port, user_dir)
         except OSError as exc:
