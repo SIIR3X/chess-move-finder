@@ -1,1 +1,1 @@
-"""chess_move_finder.engine package."""
+"""Chess engine integration (Stockfish over UCI)."""

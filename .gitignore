@@ -5,6 +5,7 @@ __pycache__/
 .eggs/
 build/
 dist/
+*.spec
 .venv/
 venv/
 env/
@@ -22,21 +23,9 @@ coverage.xml
 .vscode/
 .DS_Store
 
-# Generated dataset & model weights (heavy, not versioned).
-# Raw assets in data/raw/ ARE versioned for reproducibility.
-data/dataset/*
-!data/dataset/.gitkeep
-models/*
-!models/.gitkeep
-
-# Model weights (downloaded base models, exports) — heavy, regenerable.
-*.pt
-*.onnx
-
-# Training / prediction outputs
-runs/
-predictions/
-
 # Local config / secrets
 .env
 config/secrets.yaml
+
+# Runtime (machine-specific)
+config/calibration.json

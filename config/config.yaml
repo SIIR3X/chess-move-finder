@@ -1,20 +1,27 @@
 # chess-move-finder runtime configuration.
 
-capture:
-  monitor: 1          # index of the screen to capture (1 = primary)
-  target_fps: 60      # capture/processing loop cap
-
-inference:
-  model_path: models/chess.onnx
-  providers:          # ONNX Runtime execution providers, in priority order
-    - CUDAExecutionProvider
-    - CPUExecutionProvider
-  conf_threshold: 0.5
-
 engine:
-  stockfish_path: stockfish   # path to the Stockfish UCI binary
+  stockfish_path: D:/tools/stockfish/stockfish-windows-x86-64-avx2.exe   # path to the Stockfish UCI binary
   movetime_ms: 200            # think time per move (lower = faster, weaker)
+  threads: 12                 # Stockfish search threads (leave some cores for Chrome/OS)
+  hash_mb: 512                # transposition table size in MB (bigger = stronger)
+
+tracking:                     # CDP listener: read game events straight from your Chrome
+  host: 127.0.0.1
+  port: 9222                  # must match Chrome's --remote-debugging-port
+  url_filter: chess.com       # only attach to tabs whose URL contains this
+
+chrome:                       # used by the GUI's "Launch Chrome (debug)" button
+  path: "C:/Program Files/Google/Chrome/Application/chrome.exe"   # Chrome executable
+  user_data_dir: "C:/chess-profile"   # dedicated debug profile (required since Chrome 136)
+
+puzzles:                      # also help on chess.com puzzles (Rated Puzzles)
+  enabled: true               # set false to disable puzzle assistance entirely
+  poll_interval_ms: 400       # how often to read the board to track your progress
 
 overlay:
-  arrow_color: [0, 200, 0]
-  arrow_thickness: 6
+  arrow_color: [0, 200, 0]    # arrow colour, RGB
+  arrow_thickness: 8
+  offset_x: 0                 # screen-pixel correction if the arrow is misplaced (DPI/zoom)
+  offset_y: 0
+  scale: 1.0                  # multiply the detected board size if it's slightly off
